@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Card Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        .border-0 {
+            height: 100px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+
+    <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="container">
+            <!-- 网站标题 -->
+            <a class="navbar-brand">待辦事項</a>
+
+            <!-- 按钮区域 -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <button class="btn btn-link btn-lg btn-block" id="logout">登出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="border-0"></div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal"
+                    data-target="#insertModal">新增待辦</button>
+            </div>
+            <div class="col-md-6">
+                <button id="showIncomplete" class="btn btn-primary btn-lg btn-block" value="1">隱藏已完成</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="insertModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增待辦事項</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form inside modal -->
+                    <form id="todo_item">
+                        <div class="form-group">
+                            <label for="title">標題</label>
+                            <input name="title" type="text" class="form-control" id="title" placeholder="輸入標題">
+                        </div>
+                        <div class="form-group">
+                            <label for="content">內容</label>
+                            <textarea name="content" class="form-control" id="content" rows="5"
+                                placeholder="輸入內容"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">時間</label>
+                            <input name="time" type="datetime-local" class="form-control" id="time">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name="send_mail">
+                            <label class="form-check-label" for="defaultCheck1">
+                                寄信通知
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="close" type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                    <button id="insert_save" type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">編輯待辦事項</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form inside modal -->
+                    <form id="edit_todo_item">
+                        <div class="form-group">
+                            <label for="title">標題</label>
+                            <input name="title" type="text" class="form-control" id="edit_title" placeholder="輸入標題">
+                        </div>
+                        <div class="form-group">
+                            <label for="content">內容</label>
+                            <textarea name="content" class="form-control" id="edit_content" rows="5"
+                                placeholder="輸入內容"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">時間</label>
+                            <input name="time" type="datetime-local" class="form-control" id="edit_time">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name="send_mail">
+                            <label class="form-check-label" for="defaultCheck1">
+                                寄信通知
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="edit_close" type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                    <button id="edit_save" type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="tasks" class="container mt-5">
+
+    </div>
+
+    <script>
+
+        var edit_id = 0;
+
+        $(document).ready(function () {
+            $('#logout').click(function (event) {
+                var postData = {
+                    id: '',
+                    done_status: '',
+                    logout: 0,
+                    status: 'logout',
+                    formData: 'title=null&content=null&time=null'
+                };
+                $.post('/todolist/todo.php', postData, function (response) {
+                    alert(response.message);
+                    window.location.replace("/todolist/login.html");
+                }, 'json');
+            });
+
+            $('#insert_save').click(function (event) {
+                var formData = $('#todo_item').serialize();
+                var postData = {
+                    id: '',
+                    done_status: '',
+                    logout: '',
+                    status: 'insert',
+                    formData: formData
+                };
+                $.post('/todolist/todo.php', postData, function (response) {
+                    $('#insertModal').modal('hide');
+                    alert(response.message);
+                    get_data();
+                }, 'json');
+            });
+
+            $(document).on('click', '#showIncomplete', function () {
+                if (!Number($(this).attr('value'))) {
+                    $(this).attr('value', 1);
+                    $(this).text('隱藏已完成');
+                    var dis = 0;
+                }
+                else {
+                    $(this).attr('value', 0);
+                    $(this).text('顯示已完成');
+                    var dis = 1;
+                }
+
+                var cardElements = $('.card');
+                cardElements.each(function () {
+                    if (Number($(this).find('.btn-success').attr('value'))) {
+                        if(dis)
+                        {
+                            $(this).attr('style', 'display: none');
+                            $(document).find('#border-'+Number($(this).find('.btn-success').attr('name'))).attr('style', 'display: none');
+                        }
+                        else{
+                            $(this).removeAttr("style");
+                            $(document).find('#border-'+Number($(this).find('.btn-success').attr('name'))).removeAttr("style");
+                        }          
+                    }
+
+                });
+
+            });
+
+            $(document).on('click', '.edit', function () {
+                edit_id = $(this).attr('name');
+                $parentElement = $(this).parent();
+                $('#editModal').find('#edit_title').val($parentElement.find('.card-title').text());
+                $('#editModal').find('#edit_content').val($parentElement.find('.card-text').text());
+                //$('#editModal').find('#edit_time').val($parentElement.find('.card-header').text());
+            });
+
+
+            $(document).on('click', '#edit_save', function () {
+                var formData = $('#edit_todo_item').serialize();
+                var postData = {
+                    id: edit_id,
+                    done_status: '',
+                    logout: '',
+                    status: 'edit_save',
+                    formData: formData
+                };
+                $.post('/todolist/todo.php', postData, function (response) {
+                    $('#editModal').modal('hide');
+                    alert(response.message);
+                    get_data();
+                }, 'json');
+            });
+
+
+            $(document).on('click', '.delete', function () {
+                var delete_id = $(this).attr('name');
+                var postData = {
+                    id: delete_id,
+                    done_status: '',
+                    logout: '',
+                    status: 'delete',
+                    formData: 'title=null&content=null&time=null'
+                };
+                $.post('/todolist/todo.php', postData, function (response) {
+                    alert(response.message);
+                    get_data();
+                }, 'json');
+            });
+
+            $(document).on('click', '.done', function () {
+                var done_id = $(this).attr('name');
+                var done_status = $(this).attr('value');
+                var postData = {
+                    id: done_id,
+                    done_status: done_status,
+                    logout: '',
+                    status: 'done',
+                    formData: 'title=null&content=null&time=null'
+                };
+                $.post('/todolist/todo.php', postData, function (response) {
+                    get_data();
+                }, 'json');
+            });
+
+            $.ajax({
+                url: '/todolist/session_check.php',
+                method: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        // 用户已登录，继续发送 AJAX 请求
+                        get_data();
+                    } else {
+                        alert('請先登入');
+                        window.location.replace("/todolist/login.html");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+
+
+
+        });
+
+
+        function get_data() {
+            $('#tasks').empty();
+            $.ajax({
+                url: '/todolist/get_todo.php',
+                method: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                    if (typeof (response) === "string") { response = JSON.parse(response) }
+                    response.forEach(function (task) {
+                        var templateString = `
+                        <div class="card">
+                            <div class="card-header">
+
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title"></h5>
+                                <p class="card-text"></p>
+                                <button type="button" class="edit btn btn-primary me-2" data-toggle="modal" data-target="#editModal">編輯</button>
+                                <button type="button" class="delete btn btn-danger me-2">刪除</button>
+                                <button type="button" class="done btn btn-success"></button>
+                            </div>
+                        </div>
+                        <div class="border-0"></div>
+                        `;
+
+
+                        var $taskCard = $(templateString);
+
+                        $taskCard.find('.card-header').text(task.date);
+                        $taskCard.find('.card-title').text(task.title);
+                        $taskCard.find('.card-text').text(task.content);
+                        $taskCard.find('.btn-primary').attr('name', task.id);
+                        $taskCard.find('.btn-danger').attr('name', task.id);
+                        $taskCard.filter('.border-0').attr('id', 'border-'+task.id);
+
+                        if (!Number(task.finish)) {
+                            $taskCard.find('.btn-success').text("未完成");
+                            $taskCard.find('.btn-success').attr('value', 0);
+                            $taskCard.find('.btn-success').attr('name', task.id);
+                        }
+                        else {
+                            $taskCard.find('.btn-success').text("已完成");
+                            $taskCard.find('.btn-success').attr('value', 1);
+                            $taskCard.find('.btn-success').attr('name', task.id);
+                        }
+
+                        $('#tasks').append($taskCard);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+
+    </script>
+
+
+</body>
+
+
+</html>

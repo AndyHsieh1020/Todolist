@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bootstrap Banner</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    
+    <style>
+        .banner-item {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        .carousel.slide{
+            padding: 0;
+        }
+        
+        .banner-img {
+            width: 100%;
+            height: auto;
+        }
+
+        .carousel-item {
+            opacity: 0;
+            transition: opacity .5s ease-in-out;
+        }
+
+        .carousel-item.active {
+            opacity: 1;
+        }
+
+        .border-0 {
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand navbar-light bg-light">
+        <div class="container">
+            <!-- 网站标题 -->
+            <a class="navbar-brand" href="#">待辦事項</a>
+    
+            <!-- 按钮区域 -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">登入</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">註冊</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="container">
+        <div id="banner1" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active fade">
+                    <img class="banner-img" src="https://via.placeholder.com/800x200?text=Banner+1" alt="Banner 1">
+                </div>
+                <div class="carousel-item fade">
+                    <img class="banner-img" src="https://via.placeholder.com/800x200?text=Banner+2" alt="Banner 2">
+                </div>
+                <div class="carousel-item fade">
+                    <img class="banner-img" src="https://via.placeholder.com/800x200?text=Banner+3" alt="Banner 3">
+                </div>
+            </div>
+            <a id="banner1-prev" class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a id="banner1-next" class="carousel-control-next" href="#banner1" role="button" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </a>
+        </div>
+    </div>
+
+    <div class="border-0"></div>
+
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Fluid jumbotron</h1>
+            <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+        </div>
+    </div>
+
+    <div class="border-0"></div>
+
+    <div class="container">
+        <div id="banner2" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (1).jpg"
+                                alt="Banner 1">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (2).jpg"
+                                alt="Banner 2">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (3).jpg"
+                                alt="Banner 3">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (4).jpg"
+                                alt="Banner 4">
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item ">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (5).jpg"
+                                alt="Banner 5">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (6).jpg"
+                                alt="Banner 6">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (7).jpg"
+                                alt="Banner 7">
+                        </div>
+                        <div class="col-md-3">
+                            <img class="banner-img" src="/todolist/img/movie (8).jpg"
+                                alt="Banner 8">
+                        </div>
+                    </div>
+                </div>
+                <!-- 在这里添加其他的carousel-item -->
+            </div>
+            <a id="banner2-prev" class="carousel-control-prev" href="#banner2" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a id="banner2-next" class="carousel-control-next" href="#banner2" role="button" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </a>
+        </div>
+    </div>
+
+
+
+    <script>
+        $(document).ready(function () {
+            // 自動切換頁面
+            setInterval(function () {
+                $('#banner1').carousel('next');
+            }, 100000);
+
+            // 手動切換頁面
+            $('#banner1-prev').click(function () {
+                $('#banner').carousel('prev');
+            });
+
+            $('#banner1-next').click(function () {
+                $('#banner1').carousel('next');
+            });
+
+            // 添加淡入效果
+            $('#banner1').carousel({
+                interval: 1000,
+                pause: 'hover',
+                wrap: true
+            });
+        });
+
+
+
+        $(document).ready(function () {
+            // 自動切換頁面
+            setInterval(function () {
+                $('#banner2').carousel('next');
+            }, 10000);
+
+            // 手動切換頁面
+            $('#banner2-prev').click(function () {
+                $('#banner2').carousel('prev');
+            });
+
+            $('#banner2-next').click(function () {
+                $('#banner2').carousel('next');
+            });
+
+            // 添加淡入效果
+            $('#banner2').carousel({
+                interval: 1000,
+                pause: 'hover',
+                wrap: true
+            });
+        });
+    </script>
+
+</body>
+
+</html>
